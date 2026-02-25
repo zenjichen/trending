@@ -473,25 +473,20 @@ input {
 .tabs-bar {
   background: var(--bg-tabs);
   border-top: 1px solid var(--border);
-  overflow-x: auto;
-  scrollbar-width: none;
-  max-width: 100vw;
-}
-
-.tabs-bar::-webkit-scrollbar {
-  display: none;
 }
 
 .tabs-inner {
-  width: max-content;
-  padding: 0 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 0.5rem;
   display: flex;
+  flex-wrap: wrap;
   gap: 0;
 }
 
 .tab {
-  padding: 0.7rem 1rem;
-  font-size: 0.82rem;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-muted);
   border-bottom: 2px solid transparent;
