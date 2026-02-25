@@ -229,12 +229,7 @@ function bindEvents() {
   // Shorts filter toggle
   $filterShortsBtn.addEventListener('click', () => {
     filterShorts = !filterShorts;
-    $filterShortsBtn.classList.toggle('active', filterShorts);
-    $shortsBtnLabel.textContent = filterShorts ? 'Ẩn Shorts' : 'Hiện Shorts';
-    if (allFetchedVideos.length > 0) {
-      const toShow = filterShorts ? allFetchedVideos.filter(v => !isShort(v)) : allFetchedVideos;
-      toShow.length === 0 ? showEmpty() : renderGrid(toShow);
-    }
+    if (allFetchedVideos.length > 0) applyFilterAndRender();
   });
 
   // Retry
@@ -295,6 +290,7 @@ async function fetchTrending() {
   const c = COUNTRIES.find(x => x.code === currentCountry) || { flag: '🌍', name: currentCountry };
   $chartTitle.textContent = `YouTube Trending — ${c.flag} ${c.name}`;
   $chartSub.textContent = catName;
+  $chartSub.dataset.base = catName;
 
   showSkeletons(30);
   hideStates();
@@ -327,8 +323,7 @@ async function fetchTrending() {
     }
 
     allFetchedVideos = allVideos;
-    const toShow = filterShorts ? allVideos.filter(v => !isShort(v)) : allVideos;
-    toShow.length === 0 ? showEmpty() : renderGrid(toShow);
+    applyFilterAndRender();
     stampTime();
 
   } catch (err) {
@@ -352,7 +347,9 @@ async function doKeywordSearch() {
   currentKeyword = kw;
 
   $chartTitle.textContent = `🔍 Kết quả: "${kw}"`;
-  $chartSub.textContent = 'Tìm kiếm toàn cầu theo từ khóa';
+  const kwSub = 'Tìm kiếm toàn cầu theo từ khóa';
+  $chartSub.textContent = kwSub;
+  $chartSub.dataset.base = kwSub;
 
   showSkeletons(30);
   hideStates();
@@ -402,8 +399,7 @@ async function doKeywordSearch() {
     });
 
     allFetchedVideos = sorted;
-    const toShow = filterShorts ? sorted.filter(v => !isShort(v)) : sorted;
-    toShow.length === 0 ? showEmpty() : renderGrid(toShow);
+    applyFilterAndRender();
     stampTime();
 
   } catch (err) {
@@ -499,6 +495,31 @@ function showSkeletons(n) {
   }
 }
 
+// ─── Filter & Render ─────────────────────────────────
+function applyFilterAndRender() {
+  const shorts = allFetchedVideos.filter(v => isShort(v));
+  const toShow = filterShorts ? allFetchedVideos.filter(v => !isShort(v)) : allFetchedVideos;
+
+  // Update button label + count badge
+  $filterShortsBtn.classList.toggle('active', filterShorts);
+  if (filterShorts && shorts.length > 0) {
+    $shortsBtnLabel.textContent = `Ẩn Shorts (${shorts.length})`;
+  } else if (!filterShorts && shorts.length > 0) {
+    $shortsBtnLabel.textContent = `Hiện Shorts (${shorts.length})`;
+  } else {
+    $shortsBtnLabel.textContent = filterShorts ? 'Ẩn Shorts' : 'Hiện Shorts';
+  }
+
+  // Update subtitle indicator
+  const baseSub = $chartSub.dataset.base || $chartSub.textContent.replace(' · Đã ẩn Shorts', '');
+  $chartSub.dataset.base = baseSub;
+  $chartSub.textContent = (filterShorts && shorts.length > 0)
+    ? `${baseSub} · Đã ẩn ${shorts.length} Shorts`
+    : baseSub;
+
+  toShow.length === 0 ? showEmpty() : renderGrid(toShow);
+}
+
 // ─── States ──────────────────────────────────────────
 function hideStates() {
   $errorState.classList.add('hidden');
@@ -530,7 +551,7 @@ function isShort(video) {
   const mi = parseInt(m[2] || '0');
   const s = parseInt(m[3] || '0');
   const totalSeconds = h * 3600 + mi * 60 + s;
-  return totalSeconds <= 60;
+  return totalSeconds > 0 && totalSeconds < 60;
 }
 
 function getRankStyle(rank) {
