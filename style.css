@@ -530,27 +530,29 @@ input {
 }
 
 .logo-realtime {
-  font-size: 0.62rem;
-  font-weight: 800;
+  font-size: 0.75rem;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 3px 9px;
-  background: linear-gradient(135deg, var(--yt-red) 0%, #b30000 100%);
-  border-radius: 6px;
-  color: white;
+  letter-spacing: 0.12em;
+  padding: 2px 0;
+  background: transparent;
+  color: #ff3131;
   display: flex;
   align-items: center;
-  gap: 5px;
-  box-shadow: 0 0 10px rgba(229, 9, 20, 0.4);
+  gap: 6px;
+  text-shadow: 0 0 5px rgba(255, 49, 49, 0.6),
+    0 0 10px rgba(255, 49, 49, 0.4),
+    0 0 15px rgba(255, 49, 49, 0.2);
   animation: logoPulse 2s infinite ease-in-out;
 }
 
 .realtime-dot {
-  width: 6px;
-  height: 6px;
-  background: white;
+  width: 7px;
+  height: 7px;
+  background: #ff3131;
   border-radius: 50%;
-  animation: dotPulse 1s infinite alternate;
+  box-shadow: 0 0 8px #ff3131;
+  animation: dotPulse 0.8s infinite alternate;
 }
 
 @keyframes logoPulse {
