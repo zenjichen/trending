@@ -9,16 +9,23 @@ const LS_KEY = 'tc_yt_api_key';
 
 const CATEGORY_NAMES = {
   '': 'Tất cả video',
-  '10': 'Âm nhạc',
-  '20': 'Gaming',
-  '17': 'Thể thao',
-  '24': 'Giải trí',
-  '25': 'Tin tức & Chính trị',
-  '28': 'Khoa học & Công nghệ',
   '1': 'Phim & Hoạt hình',
+  '2': 'Ô tô & Xe cộ',
+  '10': 'Âm nhạc',
+  '15': 'Thú cưng & Động vật',
+  '17': 'Thể thao',
+  '18': 'Phim ngắn',
+  '19': 'Du lịch & Sự kiện',
+  '20': 'Gaming',
+  '21': 'Vlog',
   '22': 'Người & Blog',
   '23': 'Hài kịch',
-  '26': 'Phong cách sống'
+  '24': 'Giải trí',
+  '25': 'Tin tức & Chính trị',
+  '26': 'Phong cách sống',
+  '27': 'Giáo dục',
+  '28': 'Khoa học & Công nghệ',
+  '29': 'Phi lợi nhuận'
 };
 
 const COUNTRIES = [
