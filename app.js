@@ -63,7 +63,6 @@ let currentKeyword = '';
 let isLoading = false;
 let filterShorts = true; // true = hide shorts
 let allFetchedVideos = []; // cache for re-filtering
-let timeDays = 0; // 0 = realtime (no filter), otherwise number of days
 
 // ─── DOM Refs ────────────────────────────────────────
 const $modal = document.getElementById('api-modal');
@@ -91,7 +90,6 @@ const $keywordInput = document.getElementById('keyword-input');
 const $kwSearchBtn = document.getElementById('keyword-search-btn');
 const $filterShortsBtn = document.getElementById('filter-shorts-btn');
 const $shortsBtnLabel = document.getElementById('shorts-btn-label');
-const $timeFilter = document.getElementById('time-filter');
 
 // ─── Init ────────────────────────────────────────────
 function init() {
@@ -234,12 +232,6 @@ function bindEvents() {
     if (allFetchedVideos.length > 0) applyFilterAndRender();
   });
 
-  // Time period filter
-  $timeFilter.addEventListener('change', () => {
-    timeDays = parseInt($timeFilter.value, 10);
-    if (allFetchedVideos.length > 0) applyFilterAndRender();
-  });
-
   // Retry
   $retryBtn.addEventListener('click', () => {
     currentMode === 'keyword' ? doKeywordSearch() : fetchTrending();
@@ -298,7 +290,6 @@ async function fetchTrending() {
   const c = COUNTRIES.find(x => x.code === currentCountry) || { flag: '🌍', name: currentCountry };
   $chartTitle.textContent = `YouTube Trending — ${c.flag} ${c.name}`;
   $chartSub.textContent = catName;
-  $chartSub.dataset.base = catName;
 
   showSkeletons(30);
   hideStates();
@@ -355,9 +346,7 @@ async function doKeywordSearch() {
   currentKeyword = kw;
 
   $chartTitle.textContent = `🔍 Kết quả: "${kw}"`;
-  const kwSub = 'Tìm kiếm toàn cầu theo từ khóa';
-  $chartSub.textContent = kwSub;
-  $chartSub.dataset.base = kwSub;
+  $chartSub.textContent = 'Tìm kiếm toàn cầu theo từ khóa';
 
   showSkeletons(30);
   hideStates();
@@ -505,18 +494,10 @@ function showSkeletons(n) {
 
 // ─── Filter & Render ─────────────────────────────────
 function applyFilterAndRender() {
-  // Step 1: apply time filter
-  let pool = allFetchedVideos;
-  if (timeDays > 0) {
-    const cutoff = Date.now() - timeDays * 86400 * 1000;
-    pool = pool.filter(v => new Date(v.snippet?.publishedAt).getTime() >= cutoff);
-  }
+  const shorts = allFetchedVideos.filter(v => isShort(v));
+  const toShow = filterShorts ? allFetchedVideos.filter(v => !isShort(v)) : allFetchedVideos;
 
-  // Step 2: count & filter shorts from the time-filtered pool
-  const shorts = pool.filter(v => isShort(v));
-  const toShow = filterShorts ? pool.filter(v => !isShort(v)) : pool;
-
-  // Update Shorts button label + count badge
+  // Update button label + count badge
   $filterShortsBtn.classList.toggle('active', filterShorts);
   if (shorts.length > 0) {
     $shortsBtnLabel.textContent = filterShorts
@@ -527,15 +508,9 @@ function applyFilterAndRender() {
   }
 
   // Update subtitle indicator
-  const baseSub = $chartSub.dataset.base || $chartSub.textContent;
-  $chartSub.dataset.base = baseSub;
-  const parts = [baseSub];
-  if (timeDays > 0) {
-    const labels = { 7: '7 ngày', 30: '1 tháng', 90: '3 tháng', 180: '6 tháng' };
-    parts.push(`📅 ${labels[timeDays] || timeDays + ' ngày'}`);
-  }
-  if (filterShorts && shorts.length > 0) parts.push(`Đã ẩn ${shorts.length} Shorts`);
-  $chartSub.textContent = parts.join(' · ');
+  $chartSub.textContent = (filterShorts && shorts.length > 0)
+    ? `${$chartSub.textContent.split(' · ')[0]} · Đã ẩn ${shorts.length} Shorts`
+    : $chartSub.textContent.split(' · ')[0];
 
   toShow.length === 0 ? showEmpty() : renderGrid(toShow);
 }
