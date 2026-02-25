@@ -61,6 +61,8 @@ let currentCat = '';
 let currentMode = 'trending'; // 'trending' | 'keyword'
 let currentKeyword = '';
 let isLoading = false;
+let filterShorts = true; // true = hide shorts
+let allFetchedVideos = []; // cache for re-filtering
 
 // ─── DOM Refs ────────────────────────────────────────
 const $modal = document.getElementById('api-modal');
@@ -86,6 +88,8 @@ const $updateTime = document.getElementById('update-time');
 const $keywordBar = document.getElementById('keyword-bar');
 const $keywordInput = document.getElementById('keyword-input');
 const $kwSearchBtn = document.getElementById('keyword-search-btn');
+const $filterShortsBtn = document.getElementById('filter-shorts-btn');
+const $shortsBtnLabel = document.getElementById('shorts-btn-label');
 
 // ─── Init ────────────────────────────────────────────
 function init() {
@@ -222,6 +226,17 @@ function bindEvents() {
   $kwSearchBtn.addEventListener('click', doKeywordSearch);
   $keywordInput.addEventListener('keydown', e => { if (e.key === 'Enter') doKeywordSearch(); });
 
+  // Shorts filter toggle
+  $filterShortsBtn.addEventListener('click', () => {
+    filterShorts = !filterShorts;
+    $filterShortsBtn.classList.toggle('active', filterShorts);
+    $shortsBtnLabel.textContent = filterShorts ? 'Ẩn Shorts' : 'Hiện Shorts';
+    if (allFetchedVideos.length > 0) {
+      const toShow = filterShorts ? allFetchedVideos.filter(v => !isShort(v)) : allFetchedVideos;
+      toShow.length === 0 ? showEmpty() : renderGrid(toShow);
+    }
+  });
+
   // Retry
   $retryBtn.addEventListener('click', () => {
     currentMode === 'keyword' ? doKeywordSearch() : fetchTrending();
@@ -311,7 +326,9 @@ async function fetchTrending() {
       if (!pageToken) break;
     }
 
-    allVideos.length === 0 ? showEmpty() : renderGrid(allVideos);
+    allFetchedVideos = allVideos;
+    const toShow = filterShorts ? allVideos.filter(v => !isShort(v)) : allVideos;
+    toShow.length === 0 ? showEmpty() : renderGrid(toShow);
     stampTime();
 
   } catch (err) {
@@ -384,7 +401,9 @@ async function doKeywordSearch() {
       return parseInt(b.statistics?.viewCount || 0) - parseInt(a.statistics?.viewCount || 0);
     });
 
-    sorted.length === 0 ? showEmpty() : renderGrid(sorted);
+    allFetchedVideos = sorted;
+    const toShow = filterShorts ? sorted.filter(v => !isShort(v)) : sorted;
+    toShow.length === 0 ? showEmpty() : renderGrid(toShow);
     stampTime();
 
   } catch (err) {
@@ -502,6 +521,18 @@ function stampTime() {
 }
 
 // ─── Helpers ─────────────────────────────────────────
+function isShort(video) {
+  const iso = video?.contentDetails?.duration;
+  if (!iso) return false;
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return false;
+  const h = parseInt(m[1] || '0');
+  const mi = parseInt(m[2] || '0');
+  const s = parseInt(m[3] || '0');
+  const totalSeconds = h * 3600 + mi * 60 + s;
+  return totalSeconds <= 60;
+}
+
 function getRankStyle(rank) {
   if (rank === 1) return { badgeClass: 'rank-gold', barClass: 'bar-gold', rankLabel: '🥇' };
   if (rank === 2) return { badgeClass: 'rank-silver', barClass: 'bar-silver', rankLabel: '🥈' };

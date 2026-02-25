@@ -699,6 +699,51 @@ input {
   }
 }
 
+/* Shorts Filter Button */
+.btn-filter-shorts {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  transition: var(--transition);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-filter-shorts:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-filter-shorts.active {
+  background: rgba(229, 9, 20, 0.15);
+  border-color: rgba(229, 9, 20, 0.4);
+  color: #ff6060;
+}
+
+.btn-filter-shorts.active:hover {
+  background: rgba(229, 9, 20, 0.22);
+  border-color: rgba(229, 9, 20, 0.6);
+}
+
+/* Author note below chart header */
+.chart-author-note {
+  text-align: right;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  opacity: 0.55;
+  padding: 0.2rem 0 0;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
 /* ================================
    VIDEO GRID
    ================================ */
@@ -1082,8 +1127,9 @@ input {
   text-decoration: underline;
 }
 
-.footer-note {
-  opacity: 0.6;
+.footer-author {
+  color: var(--yt-red);
+  font-weight: 600;
 }
 
 /* ================================
