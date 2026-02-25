@@ -616,9 +616,9 @@ input {
 .chart-header {
   background: linear-gradient(135deg, #1a0505 0%, #1f0808 50%, #0f1a10 100%);
   border: 1px solid rgba(229, 9, 20, 0.25);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: var(--radius-lg);
   padding: 1rem 1.5rem;
-  margin-bottom: 0;
+  margin-bottom: 1rem;
 }
 
 .chart-header-inner {
@@ -750,13 +750,13 @@ input {
 .video-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-top: none;
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  overflow: hidden;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
   margin-bottom: 2rem;
+  padding-top: 12px;
 }
 
 /* ================================
@@ -769,6 +769,8 @@ input {
   overflow: hidden;
   cursor: pointer;
   display: block;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
 }
 
 .video-card:hover {
