@@ -204,14 +204,13 @@ function bindEvents() {
       currentCat = tab.dataset.cat || '';
 
       if (mode === 'keyword') {
-        // Show keyword bar, hide country dropdown
-        $keywordBar.classList.remove('hidden');
+        // Show keyword bar, dim country dropdown
+        $keywordBar.style.display = 'block';
         $dropdown.style.opacity = '0.4';
         $dropdown.style.pointerEvents = 'none';
-        // Focus input
         setTimeout(() => $keywordInput.focus(), 100);
       } else {
-        $keywordBar.classList.add('hidden');
+        $keywordBar.style.display = 'none';
         $dropdown.style.opacity = '';
         $dropdown.style.pointerEvents = '';
         fetchTrending();
