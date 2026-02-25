@@ -71,6 +71,10 @@ let isLoading = false;
 let filterShorts = true; // true = hide shorts
 let allFetchedVideos = []; // cache for re-filtering
 
+// ─── Popup state ─────────────────────────────────────
+let currentVideoList = []; // list rendered in grid (for prev/next)
+let currentVideoIdx = -1;  // index of currently open video
+
 // ─── DOM Refs ────────────────────────────────────────
 const $modal = document.getElementById('api-modal');
 const $keyInput = document.getElementById('api-key-input');
@@ -97,6 +101,20 @@ const $keywordInput = document.getElementById('keyword-input');
 const $kwSearchBtn = document.getElementById('keyword-search-btn');
 const $filterShortsBtn = document.getElementById('filter-shorts-btn');
 const $shortsBtnLabel = document.getElementById('shorts-btn-label');
+
+// Video popup refs
+const $vmodal      = document.getElementById('video-modal');
+const $vmodalClose = document.getElementById('vmodal-close');
+const $vmodalIframe = document.getElementById('vmodal-iframe');
+const $vmodalCounter = document.getElementById('vmodal-counter');
+const $vmodalRankBadge = document.getElementById('vmodal-rank-badge');
+const $vmodalTitle  = document.getElementById('vmodal-video-title');
+const $vmodalChannel = document.getElementById('vmodal-channel');
+const $vmodalViews  = document.getElementById('vmodal-views');
+const $vmodalAge    = document.getElementById('vmodal-age');
+const $vmodalPrev   = document.getElementById('vmodal-prev');
+const $vmodalNext   = document.getElementById('vmodal-next');
+const $vmodalYtLink = document.getElementById('vmodal-yt-link');
 
 // ─── Init ────────────────────────────────────────────
 function init() {
@@ -242,6 +260,20 @@ function bindEvents() {
   // Retry
   $retryBtn.addEventListener('click', () => {
     currentMode === 'keyword' ? doKeywordSearch() : fetchTrending();
+  });
+
+  // Video popup close
+  $vmodalClose.addEventListener('click', closeVideoModal);
+  $vmodal.addEventListener('click', (e) => {
+    if (e.target === $vmodal) closeVideoModal();
+  });
+  $vmodalPrev.addEventListener('click', () => navigateModal(-1));
+  $vmodalNext.addEventListener('click', () => navigateModal(1));
+  document.addEventListener('keydown', (e) => {
+    if ($vmodal.classList.contains('hidden')) return;
+    if (e.key === 'Escape') closeVideoModal();
+    if (e.key === 'ArrowLeft') navigateModal(-1);
+    if (e.key === 'ArrowRight') navigateModal(1);
   });
 }
 
@@ -417,6 +449,7 @@ async function doKeywordSearch() {
 
 // ─── Render ──────────────────────────────────────────
 function renderGrid(videos) {
+  currentVideoList = videos; // keep list for popup navigation
   $grid.innerHTML = '';
   videos.forEach((video, idx) => {
     const card = buildCard(video, idx + 1);
@@ -436,12 +469,11 @@ function buildCard(video, rank) {
 
   const { badgeClass, barClass, rankLabel } = getRankStyle(rank);
 
-  const card = document.createElement('a');
+  const card = document.createElement('div');
   card.className = 'video-card';
-  card.href = ytUrl;
-  card.target = '_blank';
-  card.rel = 'noopener noreferrer';
   card.dataset.rank = rank;
+  card.dataset.idx = rank - 1;
+  card.style.cursor = 'pointer';
 
   card.innerHTML = `
     <div class="card-top-bar ${barClass}"></div>
@@ -479,6 +511,8 @@ function buildCard(video, rank) {
       </div>
     </div>
   `;
+
+  card.addEventListener('click', () => openVideoModal(rank - 1));
   return card;
 }
 
@@ -520,6 +554,61 @@ function applyFilterAndRender() {
     : $chartSub.textContent.split(' · ')[0];
 
   toShow.length === 0 ? showEmpty() : renderGrid(toShow);
+}
+
+// ─── Video Popup ─────────────────────────────────────
+function openVideoModal(idx) {
+  if (idx < 0 || idx >= currentVideoList.length) return;
+  currentVideoIdx = idx;
+  const video = currentVideoList[idx];
+  const { id, snippet, statistics } = video;
+  const rank = idx + 1;
+  const ytUrl = `https://www.youtube.com/watch?v=${id}`;
+
+  // Player
+  $vmodalIframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+  $vmodalIframe.title = snippet.title;
+
+  // Info
+  const { badgeClass, rankLabel } = getRankStyle(rank);
+  if (rank <= 3) {
+    $vmodalRankBadge.textContent = `${rankLabel} #${rank} Trending`;
+    $vmodalRankBadge.className = `vmodal-rank-badge vmodal-rank-top ${badgeClass}`;
+  } else {
+    $vmodalRankBadge.textContent = `#${rank} Trending`;
+    $vmodalRankBadge.className = `vmodal-rank-badge vmodal-rank-normal`;
+  }
+
+  $vmodalTitle.textContent = snippet.title;
+  $vmodalChannel.textContent = snippet.channelTitle;
+  $vmodalChannel.href = `https://www.youtube.com/@${snippet.channelTitle.replace(/\s+/g, '')}`;
+  $vmodalViews.textContent = '👁 ' + formatViews(statistics?.viewCount) + ' lượt xem';
+  $vmodalAge.textContent = timeAgo(snippet.publishedAt);
+  $vmodalYtLink.href = ytUrl;
+
+  // Counter
+  $vmodalCounter.textContent = `${rank} / ${currentVideoList.length}`;
+
+  // Nav buttons
+  $vmodalPrev.disabled = idx === 0;
+  $vmodalNext.disabled = idx === currentVideoList.length - 1;
+
+  // Show
+  $vmodal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeVideoModal() {
+  $vmodal.classList.add('hidden');
+  $vmodalIframe.src = ''; // stop video
+  document.body.style.overflow = '';
+}
+
+function navigateModal(direction) {
+  const newIdx = currentVideoIdx + direction;
+  if (newIdx >= 0 && newIdx < currentVideoList.length) {
+    openVideoModal(newIdx);
+  }
 }
 
 // ─── States ──────────────────────────────────────────
