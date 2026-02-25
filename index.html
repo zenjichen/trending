@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TrendingChart — YouTube Trending Videos</title>
-  <meta name="description" content="Khám phá các video YouTube đang thịnh hành trên toàn thế giới. Cập nhật theo thời gian thực theo quốc gia và thể loại." />
+  <meta name="description"
+    content="Khám phá các video YouTube đang thịnh hành trên toàn thế giới. Cập nhật theo thời gian thực theo quốc gia và thể loại." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
   <!-- API Key Modal -->
@@ -17,8 +21,10 @@
     <div class="modal-box">
       <div class="modal-icon">🔑</div>
       <h2 class="modal-title">YouTube API Key</h2>
-      <p class="modal-desc">Nhập YouTube Data API v3 Key để xem video đang thịnh hành. Key được lưu cục bộ trên trình duyệt của bạn.</p>
-      <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" class="modal-link">→ Lấy API Key miễn phí tại Google Cloud Console</a>
+      <p class="modal-desc">Nhập YouTube Data API v3 Key để xem video đang thịnh hành. Key được lưu cục bộ trên trình
+        duyệt của bạn.</p>
+      <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank"
+        class="modal-link">→ Lấy API Key miễn phí tại Google Cloud Console</a>
       <div class="modal-input-group">
         <input type="text" id="api-key-input" class="modal-input" placeholder="AIzaSy..." autocomplete="off" />
         <button id="api-key-submit" class="btn-primary">Xác nhận</button>
@@ -33,7 +39,8 @@
       <div class="header-logo">
         <div class="logo-icon">
           <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-            <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+            <path
+              d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
           </svg>
         </div>
         <span class="logo-text">TrendingChart</span>
@@ -41,41 +48,23 @@
       </div>
 
       <div class="header-controls">
-        <!-- Country Selector -->
-        <div class="select-wrapper">
-          <span class="select-flag" id="selected-flag">🌍</span>
-          <select id="country-select" class="styled-select">
-            <option value="VN">🇻🇳 Việt Nam</option>
-            <option value="US" selected>🇺🇸 United States</option>
-            <option value="KR">🇰🇷 South Korea</option>
-            <option value="JP">🇯🇵 Japan</option>
-            <option value="GB">🇬🇧 United Kingdom</option>
-            <option value="FR">🇫🇷 France</option>
-            <option value="DE">🇩🇪 Germany</option>
-            <option value="IN">🇮🇳 India</option>
-            <option value="BR">🇧🇷 Brazil</option>
-            <option value="MX">🇲🇽 Mexico</option>
-            <option value="CA">🇨🇦 Canada</option>
-            <option value="AU">🇦🇺 Australia</option>
-            <option value="ID">🇮🇩 Indonesia</option>
-            <option value="TH">🇹🇭 Thailand</option>
-            <option value="SG">🇸🇬 Singapore</option>
-            <option value="PH">🇵🇭 Philippines</option>
-            <option value="TW">🇹🇼 Taiwan</option>
-            <option value="HK">🇭🇰 Hong Kong</option>
-            <option value="RU">🇷🇺 Russia</option>
-            <option value="IT">🇮🇹 Italy</option>
-            <option value="ES">🇪🇸 Spain</option>
-            <option value="NL">🇳🇱 Netherlands</option>
-            <option value="PL">🇵🇱 Poland</option>
-            <option value="TR">🇹🇷 Turkey</option>
-            <option value="SA">🇸🇦 Saudi Arabia</option>
-            <option value="EG">🇪🇬 Egypt</option>
-            <option value="ZA">🇿🇦 South Africa</option>
-            <option value="AR">🇦🇷 Argentina</option>
-            <option value="CL">🇨🇱 Chile</option>
-            <option value="CO">🇨🇴 Colombia</option>
-          </select>
+        <!-- Custom Country Dropdown -->
+        <div class="custom-dropdown" id="country-dropdown">
+          <button class="dropdown-trigger" id="dropdown-trigger" type="button">
+            <span id="selected-flag">🇺🇸</span>
+            <span id="selected-name">United States</span>
+            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              width="12" height="12">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+          <div class="dropdown-menu" id="dropdown-menu">
+            <div class="dropdown-search-wrap">
+              <input type="text" id="dropdown-search" class="dropdown-search" placeholder="Tìm quốc gia..."
+                autocomplete="off" />
+            </div>
+            <ul class="dropdown-list" id="dropdown-list"></ul>
+          </div>
         </div>
 
         <button id="change-key-btn" class="btn-ghost" title="Đổi API Key">
@@ -91,17 +80,35 @@
     <!-- Category Tabs -->
     <div class="tabs-bar">
       <div class="tabs-inner">
-        <button class="tab active" data-cat="">🔥 Tất cả</button>
-        <button class="tab" data-cat="10">🎵 Âm nhạc</button>
-        <button class="tab" data-cat="20">🎮 Gaming</button>
-        <button class="tab" data-cat="17">⚽ Thể thao</button>
-        <button class="tab" data-cat="24">🎬 Giải trí</button>
-        <button class="tab" data-cat="25">📰 Tin tức</button>
-        <button class="tab" data-cat="28">🔬 Khoa học</button>
-        <button class="tab" data-cat="1">🎭 Phim & Hoạt hình</button>
-        <button class="tab" data-cat="22">👤 Người & Blog</button>
-        <button class="tab" data-cat="23">😂 Hài kịch</button>
-        <button class="tab" data-cat="26">🧑‍🍳 Phong cách sống</button>
+        <button class="tab active" data-mode="trending" data-cat="">🔥 Tất cả</button>
+        <button class="tab" data-mode="trending" data-cat="10">🎵 Âm nhạc</button>
+        <button class="tab" data-mode="trending" data-cat="20">🎮 Gaming</button>
+        <button class="tab" data-mode="trending" data-cat="17">⚽ Thể thao</button>
+        <button class="tab" data-mode="trending" data-cat="24">🎬 Giải trí</button>
+        <button class="tab" data-mode="trending" data-cat="25">📰 Tin tức</button>
+        <button class="tab" data-mode="trending" data-cat="28">🔬 Khoa học</button>
+        <button class="tab" data-mode="trending" data-cat="1">🎭 Phim & Hoạt hình</button>
+        <button class="tab" data-mode="trending" data-cat="22">👤 Người & Blog</button>
+        <button class="tab" data-mode="trending" data-cat="23">😂 Hài kịch</button>
+        <button class="tab" data-mode="trending" data-cat="26">🧑‍🍳 Phong cách sống</button>
+        <button class="tab tab-keyword" data-mode="keyword" data-cat="">🔍 Từ khóa</button>
+      </div>
+    </div>
+
+    <!-- Keyword Search Bar (shown only in keyword mode) -->
+    <div class="keyword-bar hidden" id="keyword-bar">
+      <div class="keyword-bar-inner">
+        <div class="keyword-input-wrap">
+          <svg class="kw-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" id="keyword-input" class="keyword-input"
+            placeholder="Nhập từ khóa để tìm video trending toàn cầu... (vd: kpop 2025, AI, world cup)"
+            autocomplete="off" />
+          <button id="keyword-search-btn" class="btn-primary kw-btn">Tìm kiếm</button>
+        </div>
+        <p class="keyword-hint">Tìm kiếm video phổ biến nhất toàn cầu theo từ khóa, không giới hạn quốc gia</p>
       </div>
     </div>
   </header>
@@ -115,7 +122,8 @@
         <div class="chart-header-left">
           <div class="chart-title-group">
             <svg class="chart-yt-icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+              <path
+                d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
             </svg>
             <div>
               <h1 class="chart-title" id="chart-title">YouTube Trending</h1>
@@ -157,11 +165,13 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-inner">
-      <p>© 2026 TrendingChart · Dữ liệu từ <a href="https://developers.google.com/youtube/v3" target="_blank">YouTube Data API v3</a></p>
+      <p>© 2026 TrendingChart · Dữ liệu từ <a href="https://developers.google.com/youtube/v3" target="_blank">YouTube
+          Data API v3</a></p>
       <p class="footer-note">Không phải sản phẩm chính thức của YouTube / Google</p>
     </div>
   </footer>
 
   <script src="app.js"></script>
 </body>
+
 </html>
