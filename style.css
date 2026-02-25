@@ -529,15 +529,52 @@ input {
   color: var(--text-primary);
 }
 
-.logo-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
+.logo-realtime {
+  font-size: 0.62rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 2px 7px;
-  background: linear-gradient(135deg, var(--yt-red) 0%, #b91c1c 100%);
-  border-radius: 999px;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  background: linear-gradient(135deg, var(--yt-red) 0%, #b30000 100%);
+  border-radius: 6px;
   color: white;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 0 10px rgba(229, 9, 20, 0.4);
+  animation: logoPulse 2s infinite ease-in-out;
+}
+
+.realtime-dot {
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  animation: dotPulse 1s infinite alternate;
+}
+
+@keyframes logoPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(229, 9, 20, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 18px rgba(229, 9, 20, 0.7);
+  }
+}
+
+@keyframes dotPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
 
 /* Header Controls */
